@@ -1,0 +1,9 @@
+import re
+
+MIN_LENGTH = 10
+MAX_LENGTH = 20
+ALLOWED_CHAR_RE = re.compile(r"[A-z0-9!@#$%^&*]+")
+MAX_ID_SIMILARITY = 3
+MIN_CHAR_LEN = 4
+MIN_NUMBER_LEN = 4
+MAX_REPEAT_TIME = 3

@@ -2,7 +2,7 @@ from enum import Enum
 
 
 class IdValidateCode(Enum):
-    ALREADY_EXIST = 0
+    ALREADY_EXIST_ID = 0
     ID_TOO_SHORT = 1
     ID_TOO_LONG = 2
     ID_NOT_ALLOWED_CHAR = 3

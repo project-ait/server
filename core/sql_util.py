@@ -4,6 +4,8 @@ import os
 
 import psycopg2
 
+from auth.dto.user_dto import UserDto
+
 _HOST = "localhost"
 _PORT = 5433
 _USER = os.environ.get("AIT_DB_USER")
@@ -57,14 +59,15 @@ def createUser(id: str, pw: str) -> None:
         _conn.commit()
 
 
-def findUser(id: str) -> list:
-    # TODO: User DTO 만들고 이를 반환하게 수정
+def findUser(id: str) -> UserDto:
     table = "account"
     with _conn.cursor() as cmd:
         cmd.execute(
-            "SELECT * FROM {} WHERE id='{}'".format(
+            "SELECT * FROM {} WHERE id='{}' limit 1".format(
                 table,
                 id,
             )
         )
-        return cmd.fetchall()
+        rec = cmd.fetchone()
+        if rec is not None:
+            return UserDto(*rec)

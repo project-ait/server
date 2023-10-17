@@ -3,3 +3,4 @@ uvicorn
 pytest
 python-multipart
 psycopg2
+python-dotenv

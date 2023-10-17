@@ -20,9 +20,9 @@ def validate_id(id: str) -> IdValidateCode:
         return IdValidateCode.ID_TOO_LONG
     if is_include_not_allowed_char(id):
         return IdValidateCode.ID_NOT_ALLOWED_CHAR
-    if len(re.findall(r"[0-9]"), id) < id_rule.MIN_NUMBER_LEN:
+    if len(re.findall(r"[0-9]", id)) < id_rule.MIN_NUMBER_LEN:
         return IdValidateCode.ID_REQ_NUMBER
-    if len(re.findall(r"[A-z]"), id) < id_rule.MIN_CHAR_LEN:
+    if len(re.findall(r"[A-z]", id)) < id_rule.MIN_CHAR_LEN:
         return IdValidateCode.ID_REQ_CHAR
     if re.search(r"(.)\1{" + str(id_rule.MAX_REPEAT_TIME) + ",}"):
         return IdValidateCode.ID_TOO_SIMPLE
@@ -40,9 +40,9 @@ def validate_pw(id: str, pw: str) -> PWValidateCode:
         return PWValidateCode.PW_TOO_LONG
     if is_include_not_allowed_char(pw):
         return PWValidateCode.PW_NOT_ALLOWED_CHAR
-    if len(re.findall(r"[0-9]"), pw) < pw_rule.MIN_NUMBER_LEN:
+    if len(re.findall(r"[0-9]", pw)) < pw_rule.MIN_NUMBER_LEN:
         return PWValidateCode.PW_REQ_NUMBER
-    if len(re.findall(r"[A-z]"), pw) < pw_rule.MIN_CHAR_LEN:
+    if len(re.findall(r"[A-z]", pw)) < pw_rule.MIN_CHAR_LEN:
         return PWValidateCode.PW_REQ_CHAR
     if re.search(r"(.)\1{" + str(pw_rule.MAX_REPEAT_TIME - 1) + ",}"):
         return PWValidateCode.PW_TOO_SIMPLE

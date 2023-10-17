@@ -39,4 +39,4 @@ def test_validate_id():
         ["testId123", IdValidateCode.ID_REQ_NUMBER],
     ]
     for d in data:
-        assert auth.validate_id(d[0], d[1])
+        assert auth.validate_id(d[0]) == d[1]

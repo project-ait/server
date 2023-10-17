@@ -33,6 +33,27 @@ def validate_id(id: str) -> IdValidateCode:
     return IdValidateCode.SUCCESS
 
 
+def validate_pw(id: str, pw: str) -> PWValidateCode:
+    if len(pw) < pw_rule.MIN_LENGTH:
+        return PWValidateCode.PW_TOO_SHOTR
+    if len(pw) > pw_rule.MAX_LENGTH:
+        return PWValidateCode.PW_TOO_LONG
+    if is_include_not_allowed_char(pw):
+        return PWValidateCode.PW_NOT_ALLOWED_CHAR
+    if len(re.findall(r"[0-9]"), pw) < pw_rule.MIN_NUMBER_LEN:
+        return PWValidateCode.PW_REQ_NUMBER
+    if len(re.findall(r"[A-z]"), pw) < pw_rule.MIN_CHAR_LEN:
+        return PWValidateCode.PW_REQ_CHAR
+    if re.search(r"(.)\1{" + str(pw_rule.MAX_REPEAT_TIME - 1) + ",}"):
+        return PWValidateCode.PW_TOO_SIMPLE
+    if has_consecutive_char(pw, pw_rule.MAX_REPEAT_TIME):
+        return PWValidateCode.PW_TOO_SIMPLE
+    if is_similar_password(id, pw, pw_rule.MAX_ID_SIMILARITY + 1):
+        return PWValidateCode.PW_TOO_SIMILAR_WITH_ID
+
+    return PWValidateCode.SUCCESS
+
+
 # 허용되지 않은 문자가 있는지만 검색
 def is_include_not_allowed_char(input_str: str) -> bool:
     return not bool(id_rule.ALLOWED_CHAR_RE.fullmatch(input_str))
@@ -54,4 +75,12 @@ def has_consecutive_char(input_str: str, count: int) -> bool:
             increasing = decreasing = False
         if consecutive_count > count:
             return True
+    return False
+
+
+def is_similar_password(id: str, pw: str, count: int):
+    for i in range(len(id) - count + 1):
+        for j in range(len(pw) - count + 1):
+            if id[i : i + count] == pw[j : j + count]:
+                return True
     return False

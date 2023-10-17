@@ -31,7 +31,7 @@ _conn = psycopg2.connect(
 )
 
 
-def create_user(id: str, pw: str) -> str:
+def create_user(id: str, pw: str) -> UserDto:
     table = "account"
     encoded_pw = str(hashlib.sha3_512((pw + _SALT).encode()).hexdigest())
     encoded_pw += _PERPPER
@@ -40,26 +40,32 @@ def create_user(id: str, pw: str) -> str:
     state = "ACTIVATE"
     register_timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     with _conn.cursor() as cmd:
-        # TODO: JWT 헤더에 들어갈 JSON 데이터 결정
-        jwt_token = jwt.encode({}, jwt_key, algorithm="HS256")
-
-        cmd.execute(
-            "INSERT INTO {} ({}) VALUES ({})".format(
-                table,
-                'id, password, "jwtKey", "validState", state, "registerTimestamp"',
-                "'{}', '{}', '{}', '{}', '{}', '{}'".format(
-                    id,
-                    encoded_pw,
-                    jwt_key,
-                    valid_state,
-                    state,
-                    register_timestamp,
-                ),
+        try:
+            cmd.execute(
+                "INSERT INTO {} ({}) VALUES ({})".format(
+                    table,
+                    'id, password, "jwtKey", "validState", state, "registerTimestamp"',
+                    "'{}', '{}', '{}', '{}', '{}', '{}'".format(
+                        id,
+                        encoded_pw,
+                        jwt_key,
+                        valid_state,
+                        state,
+                        register_timestamp,
+                    ),
+                )
             )
-        )
-        _conn.commit()
-
-        return jwt_token
+            _conn.commit()
+            return UserDto(
+                id=id,
+                encoded_pw=encoded_pw,
+                jwtKey=jwt_key,
+                validState=valid_state,
+                state=state,
+                registerTimestamp=register_timestamp,
+            )
+        except:
+            return
 
 
 def find_user(id: str) -> UserDto:

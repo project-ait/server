@@ -60,6 +60,12 @@ def validate_jwt(jwt_token: str, id: str) -> bool:
         return False
 
 
+def calculate_jwt(jwt_key: str):
+    # JWT 헤더에 들어갈 데이터 결정
+    jwt_token = jwt.encode({}, jwt_key, algorithm="HS256")
+    return jwt_token
+
+
 # 허용되지 않은 문자가 있는지만 검색
 def is_include_not_allowed_char(input_str: str) -> bool:
     return not bool(id_rule.ALLOWED_CHAR_RE.fullmatch(input_str))

@@ -11,8 +11,6 @@ _HOST = "localhost"
 _PORT = 5433
 _USER = os.environ.get("AIT_DB_USER")
 _PW = os.environ.get("AIT_DB_PW")
-_SALT = os.environ.get("AIT_PW_SALT")  # admin only
-_PERPPER = os.environ.get("AIT_PW_PEPPER")  # admin only
 _DATABASE = os.environ.get("AIT_DB_NAME")
 
 if _USER == None:
@@ -31,10 +29,8 @@ _conn = psycopg2.connect(
 )
 
 
-def create_user(id: str, pw: str) -> UserDto:
+def create_user(id: str, encoded_pw: str) -> UserDto:
     table = "account"
-    encoded_pw = str(hashlib.sha3_512((pw + _SALT).encode()).hexdigest())
-    encoded_pw += _PERPPER
     jwt_key = str(hashlib.sha3_512((id + "/" + encoded_pw).encode()).hexdigest())
     valid_state = "NOT_VALID"
     state = "ACTIVATE"

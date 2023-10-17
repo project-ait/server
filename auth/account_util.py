@@ -1,3 +1,5 @@
+import hashlib
+import os
 import re
 
 import jwt
@@ -5,6 +7,9 @@ import jwt
 from auth.dto.return_code import IdValidateCode, PWValidateCode
 from auth.rule import id_rule, pw_rule
 from core import sql_util
+
+_SALT = os.environ.get("AIT_PW_SALT")  # admin only
+_PERPPER = os.environ.get("AIT_PW_PEPPER")  # admin only
 
 
 def validate_id(id: str) -> IdValidateCode:
@@ -47,6 +52,12 @@ def validate_pw(id: str, pw: str) -> PWValidateCode:
         return PWValidateCode.PW_TOO_SIMILAR_WITH_ID
 
     return PWValidateCode.SUCCESS
+
+
+def encode_pw(pw: str):
+    encoded_pw = str(hashlib.sha3_512((pw + _SALT).encode()).hexdigest())
+    encoded_pw += _PERPPER
+    return
 
 
 def validate_jwt(jwt_token: str, id: str) -> bool:

@@ -13,7 +13,7 @@ class IdValidateCode(Enum):
 
 
 class PWValidateCode(Enum):
-    PW_TOO_SHOTR = 0
+    PW_TOO_SHORT = 0
     PW_TOO_LONG = 1
     PW_NOT_ALLOWED_CHAR = 2
     PW_REQ_NUMBER = 3

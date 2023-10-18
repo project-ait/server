@@ -35,7 +35,7 @@ def validate_id(id: str) -> IdValidateCode:
 
 def validate_pw(id: str, pw: str) -> PWValidateCode:
     if len(pw) < pw_rule.MIN_LENGTH:
-        return PWValidateCode.PW_TOO_SHOTR
+        return PWValidateCode.PW_TOO_SHORT
     if len(pw) > pw_rule.MAX_LENGTH:
         return PWValidateCode.PW_TOO_LONG
     if is_include_not_allowed_char(pw):

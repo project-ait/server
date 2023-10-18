@@ -29,8 +29,7 @@ def validate_id(id: str) -> IdValidateCode:
         return IdValidateCode.ID_TOO_SIMPLE
     if sql_util.find_user(id) is not None:
         return IdValidateCode.ALREADY_EXIST_ID
-
-    return IdValidateCode.SUCCESS
+    return IdValidateCode.NON_EXIST_ID
 
 
 def validate_pw(id: str, pw: str) -> PWValidateCode:

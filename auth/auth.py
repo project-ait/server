@@ -10,7 +10,7 @@ router = APIRouter()
 @router.post("/register")
 def register_user(id: str, pw: str):
     id_val_code = account_util.validate_id(id)
-    if id_val_code != IdValidateCode.SUCCESS:
+    if id_val_code != IdValidateCode.NON_EXIST_ID:
         return {"status": "fail", "code": id_val_code.name}
     pw_val_code = account_util.validate_pw(id, pw)
     if pw_val_code != PWValidateCode.SUCCESS:

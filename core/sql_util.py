@@ -3,6 +3,7 @@ import hashlib
 import os
 
 import psycopg2
+from psycopg2 import connection
 
 from auth.dto.user_dto import UserDto
 
@@ -12,7 +13,9 @@ _USER = os.environ.get("AIT_DB_USER")
 _PW = os.environ.get("AIT_DB_PW")
 _DATABASE = os.environ.get("AIT_DB_NAME")
 
-if not os.environ.get("IS_TEST"):
+_IS_TEST = os.environ.get("IS_TEST")
+
+if not _IS_TEST:
     if _USER is None:
         raise Exception("DB 접속 유저 이름이 설정되지 않았습니다")
     if _PW is None:
@@ -20,13 +23,13 @@ if not os.environ.get("IS_TEST"):
     if _DATABASE is None:
         raise Exception("접속할 DB 이름을 설정하지 않았습니다")
 
-_conn = psycopg2.connect(
+_conn: connection = psycopg2.connect(
     host=_HOST,
     dbname=_DATABASE,
     user=_USER,
     password=_PW,
     port=_PORT,
-)
+) if not _IS_TEST else None
 
 
 def create_user(id: str, encoded_pw: str) -> UserDto:

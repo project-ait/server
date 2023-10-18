@@ -1,12 +1,11 @@
-import os
-
 import uvicorn
-from dotenv import load_dotenv
 from fastapi import FastAPI
+
+from auth import auth
 
 app = FastAPI()
 
-# app.include_router(file.router, prefix="/file", tags=["file"])
+app.include_router(auth.router, prefix="/auth", tags=["auth"])
 
 
 @app.get("/")

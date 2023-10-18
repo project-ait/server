@@ -9,7 +9,7 @@ from auth.rule import id_rule, pw_rule
 from core import sql_util
 
 _SALT = os.environ.get("AIT_PW_SALT")  # admin only
-_PERPPER = os.environ.get("AIT_PW_PEPPER")  # admin only
+_PEPPER = os.environ.get("AIT_PW_PEPPER")  # admin only
 
 
 def validate_id(id: str) -> IdValidateCode:
@@ -56,7 +56,7 @@ def validate_pw(id: str, pw: str) -> PWValidateCode:
 
 def encode_pw(pw: str):
     encoded_pw = str(hashlib.sha3_512((pw + _SALT).encode()).hexdigest())
-    encoded_pw += _PERPPER
+    encoded_pw += _PEPPER
     return encoded_pw
 
 
@@ -104,6 +104,6 @@ def has_consecutive_char(input_str: str, count: int) -> bool:
 def is_similar_password(id: str, pw: str, count: int):
     for i in range(len(id) - count + 1):
         for j in range(len(pw) - count + 1):
-            if id[i : i + count] == pw[j : j + count]:
+            if id[i: i + count] == pw[j: j + count]:
                 return True
     return False

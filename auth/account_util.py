@@ -1,10 +1,11 @@
+from datetime import datetime, timedelta
 import hashlib
 import os
 import re
 
 import jwt
 
-from auth.dto.return_code import IdValidateCode, PWValidateCode
+from auth.dto.return_code import IdValidateCode, PWValidateCode, JWTValidateCode
 from auth.rule import id_rule, pw_rule
 from core import sql_util
 
@@ -59,20 +60,31 @@ def encode_pw(pw: str):
     return encoded_pw
 
 
-def validate_jwt(jwt_token: str, id: str) -> bool:
+def validate_jwt(jwt_token: str, id: str) -> JWTValidateCode:
     user = sql_util.find_user(id)
     if user == None:
-        return False
+        return JWTValidateCode.NON_EXIST_USER
     try:
-        head = jwt.decode(jwt_token, user.jwtKey, algorithms="HS256")
-        return True
+        head = jwt.decode(jwt_token.encode(), user.jwtKey, algorithms="HS256")
+        now = datetime.now().timestamp()
+        if now > head["exp"]:
+            return JWTValidateCode.EXPIRED_TOKEN
+        return JWTValidateCode.AUTHORIZED
     except:
-        return False
+        return JWTValidateCode.UNAUTHORIZED
 
 
 def calculate_jwt(jwt_key: str):
-    # JWT 헤더에 들어갈 데이터 결정
-    jwt_token = jwt.encode({}, jwt_key, algorithm="HS256")
+    iat: datetime = datetime.now()
+    exp: datetime = iat + timedelta(days=4)
+    jwt_token = jwt.encode(
+        {
+            "iat": iat.timestamp(),
+            "exp": exp.timestamp(),
+        },
+        jwt_key,
+        algorithm="HS256",
+    )
     return jwt_token
 
 
@@ -103,6 +115,6 @@ def has_consecutive_char(input_str: str, count: int) -> bool:
 def is_similar_password(id: str, pw: str, count: int):
     for i in range(len(id) - count + 1):
         for j in range(len(pw) - count + 1):
-            if id[i: i + count] == pw[j: j + count]:
+            if id[i : i + count] == pw[j : j + count]:
                 return True
     return False

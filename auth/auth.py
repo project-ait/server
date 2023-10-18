@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 
 from auth import account_util
-from auth.dto.return_code import IdValidateCode, PWValidateCode
+from auth.dto.return_code import IdValidateCode, PWValidateCode, JWTValidateCode
 from core import sql_util
 from core.response import Response, ResponseStatus
 
@@ -66,10 +66,11 @@ def login(id: str, pw: str):
 
 @router.post("/unregister")
 def unregister(id: str, jwt_token: str):
-    if not account_util.validate_jwt(jwt_token, id):
+    jwt_val_code = account_util.validate_jwt(jwt_token, id)
+    if jwt_val_code != JWTValidateCode.AUTHORIZED:
         return Response(
             ResponseStatus.fail,
-            {"code": "INCORRECT_LOGIN_DATA"},
+            {"code": jwt_val_code.name},
         )
 
     if not sql_util.delete_user(id):

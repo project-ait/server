@@ -21,3 +21,10 @@ class PWValidateCode(Enum):
     PW_TOO_SIMILAR_WITH_ID = 5
     PW_TOO_SIMPLE = 6
     SUCCESS = 7
+
+
+class JWTValidateCode(Enum):
+    UNAUTHORIZED = 0
+    NON_EXIST_USER = 1
+    EXPIRED_TOKEN = 2
+    AUTHORIZED = 3

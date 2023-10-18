@@ -62,3 +62,23 @@ def login(id: str, pw: str):
         ResponseStatus.success,
         {"jwt": jwt_token},
     )
+
+
+@router.post("/unregister")
+def unregister(id: str, jwt_token: str):
+    if not account_util.validate_jwt(jwt_token, id):
+        return Response(
+            ResponseStatus.fail,
+            {"code": "INCORRECT_LOGIN_DATA"},
+        )
+
+    if not sql_util.delete_user(id):
+        return Response(
+            ResponseStatus.fail,
+            {"code": "UNKNOWN_ERROR"},
+        )
+
+    return Response(
+        ResponseStatus.success,
+        {"msg": "DELETE SUCCESS"},
+    )

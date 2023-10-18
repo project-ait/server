@@ -70,3 +70,19 @@ def find_user(id: str) -> UserDto:
         rec = cmd.fetchone()
         if rec is not None:
             return UserDto(*rec)
+
+
+def delete_user(id: str) -> bool:
+    table = "account"
+    with _conn.cursor() as cmd:
+        try:
+            cmd.execute(
+                'DELETE FROM {} WHERE "userId"={}'.format(
+                    table,
+                    id,
+                )
+            )
+            _conn.commit()
+            return True
+        except:
+            return False

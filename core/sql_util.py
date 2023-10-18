@@ -12,12 +12,13 @@ _USER = os.environ.get("AIT_DB_USER")
 _PW = os.environ.get("AIT_DB_PW")
 _DATABASE = os.environ.get("AIT_DB_NAME")
 
-if _USER == None:
-    raise Exception("DB 접속 유저 이름이 설정되지 않았습니다")
-if _PW == None:
-    raise Exception("DB 접속 암호가 설정되지 않았습니다")
-if _DATABASE == None:
-    raise Exception("접속할  DB 이름을 설정하지 않았습니다")
+if not os.environ.get("IS_TEST"):
+    if _USER is None:
+        raise Exception("DB 접속 유저 이름이 설정되지 않았습니다")
+    if _PW is None:
+        raise Exception("DB 접속 암호가 설정되지 않았습니다")
+    if _DATABASE is None:
+        raise Exception("접속할 DB 이름을 설정하지 않았습니다")
 
 _conn = psycopg2.connect(
     host=_HOST,

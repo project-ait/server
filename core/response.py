@@ -1,9 +1,13 @@
 from enum import Enum
+from typing import Any
 
 
 class ResponseStatus(Enum):
     fail = 0
     success = 1
+
+    def __str__(self) -> str:
+        return self.name
 
 
 class Response:
@@ -12,11 +16,13 @@ class Response:
         self.data = data
 
     def __str__(self) -> str:
-        return str(self.__dict__)
+        keys = self.__dict__.keys()
+        res = "Response:\n"
+        for k in keys:
+            res += "\t{}: {}\n".format(k, str(self.__dict__[k]))
+        return res
 
     def __iter__(self):
         for key in self.__dict__:
             attr = getattr(self, key)
-            if isinstance(attr, Enum):
-                return key, attr.name
-            return key, attr
+            yield key, str(attr)

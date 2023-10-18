@@ -33,7 +33,7 @@ class UserDto:
         validTimestamp: datetime,
         email: str,
     ):
-        self.__init__(
+        self._init_field(
             id,
             user_id,
             password,
@@ -46,6 +46,30 @@ class UserDto:
         )
 
     def __init__(
+        self,
+        id: int,
+        user_id: str,
+        password: str,
+        jwtKey: str,
+        validState: UserValidateState,
+        state: UserState,
+        registerTimestamp: datetime,
+        validTimestamp: datetime,
+        email: str,
+    ):
+        self._init_field(
+            id,
+            user_id,
+            password,
+            jwtKey,
+            validState,
+            state,
+            registerTimestamp,
+            validTimestamp,
+            email,
+        )
+
+    def _init_field(
         self,
         id: int,
         user_id: str,

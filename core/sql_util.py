@@ -3,7 +3,6 @@ import hashlib
 import os
 
 import psycopg2
-from psycopg2 import connection
 
 from auth.dto.user_dto import UserDto
 
@@ -23,7 +22,7 @@ if not _IS_TEST:
     if _DATABASE is None:
         raise Exception("접속할 DB 이름을 설정하지 않았습니다")
 
-_conn: connection = psycopg2.connect(
+_conn = psycopg2.connect(
     host=_HOST,
     dbname=_DATABASE,
     user=_USER,

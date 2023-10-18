@@ -44,7 +44,7 @@ def validate_pw(id: str, pw: str) -> PWValidateCode:
         return PWValidateCode.PW_REQ_NUMBER
     if len(re.findall(r"[A-z]", pw)) < pw_rule.MIN_CHAR_LEN:
         return PWValidateCode.PW_REQ_CHAR
-    if re.search(r"(.)\1{" + str(pw_rule.MAX_REPEAT_TIME - 1) + ",}"):
+    if re.search(r"(.)\1{" + str(pw_rule.MAX_REPEAT_TIME - 1) + ",}", pw):
         return PWValidateCode.PW_TOO_SIMPLE
     if has_consecutive_char(pw, pw_rule.MAX_REPEAT_TIME):
         return PWValidateCode.PW_TOO_SIMPLE
@@ -57,7 +57,7 @@ def validate_pw(id: str, pw: str) -> PWValidateCode:
 def encode_pw(pw: str):
     encoded_pw = str(hashlib.sha3_512((pw + _SALT).encode()).hexdigest())
     encoded_pw += _PERPPER
-    return
+    return encoded_pw
 
 
 def validate_jwt(jwt_token: str, id: str) -> bool:

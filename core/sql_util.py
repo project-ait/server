@@ -40,7 +40,7 @@ def create_user(id: str, encoded_pw: str) -> UserDto:
             cmd.execute(
                 "INSERT INTO {} ({}) VALUES ({})".format(
                     table,
-                    'id, password, "jwtKey", "validState", state, "registerTimestamp"',
+                    '"userId", password, "jwtKey", "validState", state, "registerTimestamp"',
                     "'{}', '{}', '{}', '{}', '{}', '{}'".format(
                         id,
                         encoded_pw,
@@ -51,17 +51,12 @@ def create_user(id: str, encoded_pw: str) -> UserDto:
                     ),
                 )
             )
+            user = find_user(id)
             _conn.commit()
-            return UserDto(
-                id=id,
-                encoded_pw=encoded_pw,
-                jwtKey=jwt_key,
-                validState=valid_state,
-                state=state,
-                registerTimestamp=register_timestamp,
-            )
-        except:
-            return
+            return user
+        except Exception as e:
+            print(e)
+            return None
 
 
 def find_user(id: str) -> UserDto:

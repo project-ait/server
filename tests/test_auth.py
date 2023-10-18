@@ -1,5 +1,5 @@
 from auth import account_util
-from auth.dto.return_code import IdValidateCode, PWValidateCode
+from auth.dto.return_code import IdValidateCode
 from auth.rule import id_rule
 
 

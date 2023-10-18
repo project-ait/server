@@ -2,7 +2,6 @@ import datetime
 import hashlib
 import os
 
-import jwt
 import psycopg2
 
 from auth.dto.user_dto import UserDto

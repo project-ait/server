@@ -23,7 +23,7 @@ def validate_id(id: str) -> IdValidateCode:
         return IdValidateCode.ID_REQ_NUMBER
     if len(re.findall(r"[A-z]", id)) < id_rule.MIN_CHAR_LEN:
         return IdValidateCode.ID_REQ_CHAR
-    if re.search(r"(.)\1{" + str(id_rule.MAX_REPEAT_TIME) + ",}"):
+    if re.search(r"(.)\1{" + str(id_rule.MAX_REPEAT_TIME) + ",}", id):
         return IdValidateCode.ID_TOO_SIMPLE
     if has_consecutive_char(id, id_rule.MAX_REPEAT_TIME):
         return IdValidateCode.ID_TOO_SIMPLE

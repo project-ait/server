@@ -8,7 +8,7 @@ import psycopg2
 from auth.dto.user_dto import UserDto
 
 _HOST = "localhost"
-_PORT = 5433
+_PORT = 5432
 _USER = os.environ.get("AIT_DB_USER")
 _PW = os.environ.get("AIT_DB_PW")
 _DATABASE = os.environ.get("AIT_DB_NAME")
@@ -68,7 +68,7 @@ def find_user(id: str) -> UserDto:
     table = "account"
     with _conn.cursor() as cmd:
         cmd.execute(
-            "SELECT * FROM {} WHERE id='{}' limit 1".format(
+            "SELECT * FROM {} WHERE \"userId\"='{}' limit 1".format(
                 table,
                 id,
             )

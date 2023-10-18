@@ -30,6 +30,7 @@ def validate_id(id: str) -> IdValidateCode:
         return IdValidateCode.ID_TOO_SIMPLE
     if sql_util.find_user(id) is not None:
         return IdValidateCode.ALREADY_EXIST_ID
+
     return IdValidateCode.NON_EXIST_ID
 
 
@@ -54,7 +55,7 @@ def validate_pw(id: str, pw: str) -> PWValidateCode:
     return PWValidateCode.SUCCESS
 
 
-def encode_pw(pw: str):
+def encode_pw(pw: str) -> str:
     encoded_pw = str(hashlib.sha3_512((pw + _SALT).encode()).hexdigest())
     encoded_pw += _PEPPER
     return encoded_pw
@@ -74,7 +75,7 @@ def validate_jwt(jwt_token: str, id: str) -> JWTValidateCode:
         return JWTValidateCode.UNAUTHORIZED
 
 
-def calculate_jwt(jwt_key: str):
+def calculate_jwt(jwt_key: str) -> str:
     iat: datetime = datetime.now()
     exp: datetime = iat + timedelta(days=4)
     jwt_token = jwt.encode(
@@ -112,7 +113,7 @@ def has_consecutive_char(input_str: str, count: int) -> bool:
     return False
 
 
-def is_similar_password(id: str, pw: str, count: int):
+def is_similar_password(id: str, pw: str, count: int) -> bool:
     for i in range(len(id) - count + 1):
         for j in range(len(pw) - count + 1):
             if id[i : i + count] == pw[j : j + count]:

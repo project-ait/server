@@ -1,15 +1,15 @@
 from fastapi import APIRouter, HTTPException
 
 from auth import account_util
-from auth.dto.return_code import IdValidateCode, PWValidateCode, JWTValidateCode
+from auth.dto.return_code import IdValidateCode, JWTValidateCode, PWValidateCode
 from core import sql_util
 from core.response import Response, ResponseStatus
 
 router = APIRouter()
 
 
-@router.post("/register")
-def register_user(id: str, pw: str):
+@router.post("/register", response_model=None)
+def register_user(id: str, pw: str) -> Response:
     id_val_code = account_util.validate_id(id)
     if id_val_code != IdValidateCode.NON_EXIST_ID:
         return Response(
@@ -35,8 +35,8 @@ def register_user(id: str, pw: str):
     )
 
 
-@router.post("/login")
-def login(id: str, pw: str):
+@router.post("/login", response_model=None)
+def login(id: str, pw: str) -> Response:
     id_val_code = account_util.validate_id(id)
     if id_val_code != IdValidateCode.ALREADY_EXIST_ID:
         return Response(
@@ -64,8 +64,8 @@ def login(id: str, pw: str):
     )
 
 
-@router.post("/unregister")
-def unregister(id: str, jwt_token: str):
+@router.post("/unregister", response_model=None)
+def unregister(id: str, jwt_token: str) -> Response:
     jwt_val_code = account_util.validate_jwt(jwt_token, id)
     if jwt_val_code != JWTValidateCode.AUTHORIZED:
         return Response(

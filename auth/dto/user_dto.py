@@ -80,7 +80,7 @@ class UserDto:
         registerTimestamp: datetime,
         validTimestamp: datetime,
         email: str,
-    ):
+    ) -> None:
         self.id = id
         self.user_id = user_id
         self.password = password

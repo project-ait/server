@@ -15,9 +15,10 @@ router = APIRouter()
 
 
 @router.get("/")
-def python(request: Request):
+def python(request: Request, lat: float | None = None, lon: float | None = None):
     ip = request.client.host
-    lat, lon = get_location(ip)
+    if lat == None or lon == None:
+        lat, lon = get_location(ip)
     data: NearDongDto = find_near_dong(lat, lon)
 
     return get_single_weather(data.code, data.lat, data.lon)

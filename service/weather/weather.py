@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 from fastapi import APIRouter, Request
 
 from service.weather.dto.near_dong_dto import NearDongDto
-from service.weather.dto.weather_dto import DetailWeather
+from service.weather.dto.weather_dto import DetailWeather, ConcecutiveWeather
 from service.weather.weather_location_util import find_near_dong
 
 router = APIRouter()
@@ -15,13 +15,29 @@ router = APIRouter()
 
 
 @router.get("/")
-def python(request: Request, lat: float | None = None, lon: float | None = None):
-    ip = request.client.host
+def weather_detail(
+    request: Request, lat: float | None = None, lon: float | None = None
+):
     if lat == None or lon == None:
+        ip = request.client.host
         lat, lon = get_location(ip)
     data: NearDongDto = find_near_dong(lat, lon)
 
     return get_single_weather(data.code, data.lat, data.lon)
+
+
+@router.get("/list")
+def weather_list(
+    request: Request,
+    lat: float | None = None,
+    lon: float | None = None,
+):
+    if lat == None or lon == None:
+        ip = request.client.host
+        lat, lon = get_location(ip)
+    data: NearDongDto = find_near_dong(lat, lon)
+
+    return get_concecutive_weather(data.code, data.lat, data.lon)
 
 
 def get_location(ip: str) -> (float, float):
@@ -87,3 +103,46 @@ def get_single_weather(code: str, lat: float, lon: float) -> DetailWeather:
         fdst,
         ffdst,
     )
+
+
+def get_concecutive_weather(
+    code: str, lat: float, lon: float
+) -> list[ConcecutiveWeather]:
+    body = requests.get(
+        "https://www.weather.go.kr/w/wnuri-fct2021/main/digital-forecast.do?code={}}&unit=m%2Fs&hr1=Y&lat={}&lon={}".format(
+            code,
+            lat,
+            lon,
+        ),
+    ).text
+
+    soup = BeautifulSoup(body, "html.parser")
+    ls = [*soup.find_all("ul", class_="vs-item"), *soup.find_all("ul", class_="s-item")]
+    ls = ls[:-24]  # 마지막 24개 (글피 데이터) 삭제
+    for i in range(len(ls)):
+        print(" ", i, sep="", end=",")
+        item = ls[i].find_all("span")
+        hour = item[1].get_text()[:-1]
+        stat = item[3].get_text()
+        temp = float(item[5].get_text().split("(")[0][:-1])
+        chill = float(item[8].get_text()[:-1])
+        rain = item[10].get_text()
+        rain = 0 if rain == "-" else int(rain)
+        pred_rain = item[12].get_text()[:-1]
+        pred_rain = 0 if pred_rain == "" else int(pred_rain)
+        ws = float(item[15].get_text()[:-3])
+        wd = item[14].get_text()
+        reh = int(item[18].get_text()[:-1])
+        ls[i] = ConcecutiveWeather(
+            hour=hour,
+            stat=stat,
+            temp=temp,
+            chill=chill,
+            rain=rain,
+            pred_rain=pred_rain,
+            ws=ws,
+            wd=wd,
+            reh=reh,
+        )
+
+    return ls

@@ -25,3 +25,27 @@ class DetailWeather:
         self.wd = wd
         self.fdst = fdst
         self.ffdst = ffdst
+
+
+class ConcecutiveWeather:
+    def __init__(
+        self,
+        hour: int,  # 시
+        stat: str,  # 날씨 (한국어)
+        temp: float,  # 기온
+        chill: float,  # 체감온도
+        rain: int,  # 강수량 (mm/h)
+        pred_rain: int,  # 강수 확률 (%)
+        ws: float,  # 풍속 (m/s)
+        wd: str,  # 풍향 (한국어)
+        reh: int,  # 습도 (%)
+    ):
+        self.hour = hour
+        self.stat = stat
+        self.temp = temp
+        self.chill = chill
+        self.rain = rain
+        self.pred_rain = pred_rain
+        self.ws = ws
+        self.wd = wd
+        self.reh = reh

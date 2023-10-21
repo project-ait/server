@@ -8,7 +8,7 @@ class DetailWeather:
         tmin: typing.Union[float, None],  # 최저온도
         tmax: typing.Union[float, None],  # 최고온도
         chill: float,  # 체감온도
-        rain: typing.Union[int, None],  # 강수량 (mm/h)
+        rain: int,  # 강수량 (mm/h)
         reh: int,  # 습도 (%)
         ws: float,  # 풍속 (m/s)
         wd: str,  # 풍향 (한국어)

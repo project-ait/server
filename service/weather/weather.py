@@ -16,12 +16,14 @@ router = APIRouter()
 
 @router.get("/")
 def weather_detail(
-    request: Request, lat: float | None = None, lon: float | None = None
+    request: Request,
+    lat: float | None = None,
+    lon: float | None = None,
 ):
     if lat == None or lon == None:
         ip = request.client.host
         lat, lon = get_location(ip)
-    data: NearDongDto = find_near_dong(lat, lon)
+    data = find_near_dong(lat, lon)
 
     return get_single_weather(data.code, data.lat, data.lon)
 
@@ -35,7 +37,7 @@ def weather_list(
     if lat == None or lon == None:
         ip = request.client.host
         lat, lon = get_location(ip)
-    data: NearDongDto = find_near_dong(lat, lon)
+    data = find_near_dong(lat, lon)
 
     return get_concecutive_weather(data.code, data.lat, data.lon)
 
@@ -49,12 +51,15 @@ def get_location(ip: str) -> (float, float):
         _ipinfo_token,
     )
     resp = json.loads(requests.get(url).text)
-    print(resp)
     loc = resp["loc"].split(",")
     return float(loc[0]), float(loc[1])
 
 
-def get_single_weather(code: str, lat: float, lon: float) -> DetailWeather:
+def get_single_weather(
+    code: str,
+    lat: float,
+    lon: float,
+) -> DetailWeather:
     body = requests.get(
         "https://www.weather.go.kr/w/wnuri-fct2021/main/current-weather.do?&unit=m%2Fs*code={}&aws=N&lat={}&loc={}".format(
             code,
@@ -68,7 +73,7 @@ def get_single_weather(code: str, lat: float, lon: float) -> DetailWeather:
 
     temp_section = ul[0].find("span", class_="tmp")
     temp = float(temp_section.get_text().split("℃")[0])
-    minmax: str = temp_section.find_all("span")
+    minmax = temp_section.find_all("span")
     tmin = minmax[2].get_text()[:-1]
     tmin = float(tmin) if tmin.isdigit() else None
     tmax = minmax[4].get_text()[:-1]
@@ -79,7 +84,7 @@ def get_single_weather(code: str, lat: float, lon: float) -> DetailWeather:
 
     val_section = ul[1].find_all("span", class_="val")
     rain = val_section[2].get_text()[:-3]
-    rain = None if rain == "-" else float(rain)
+    rain = 0 if rain == "-" else float(rain)
 
     reh = int(val_section[0].get_text()[:-1])
 
@@ -92,21 +97,23 @@ def get_single_weather(code: str, lat: float, lon: float) -> DetailWeather:
     ffdst = float(dst_section[0].get_text())
 
     return DetailWeather(
-        temp,
-        tmin,
-        tmax,
-        chill,
-        rain,
-        reh,
-        ws,
-        wd,
-        fdst,
-        ffdst,
+        temp=temp,
+        tmin=tmin,
+        tmax=tmax,
+        chill=chill,
+        rain=rain,
+        reh=reh,
+        ws=ws,
+        wd=wd,
+        fdst=fdst,
+        ffdst=ffdst,
     )
 
 
 def get_concecutive_weather(
-    code: str, lat: float, lon: float
+    code: str,
+    lat: float,
+    lon: float,
 ) -> list[ConcecutiveWeather]:
     body = requests.get(
         "https://www.weather.go.kr/w/wnuri-fct2021/main/digital-forecast.do?code={}}&unit=m%2Fs&hr1=Y&lat={}&lon={}".format(
@@ -117,10 +124,11 @@ def get_concecutive_weather(
     ).text
 
     soup = BeautifulSoup(body, "html.parser")
+
     ls = [*soup.find_all("ul", class_="vs-item"), *soup.find_all("ul", class_="s-item")]
     ls = ls[:-24]  # 마지막 24개 (글피 데이터) 삭제
+
     for i in range(len(ls)):
-        print(" ", i, sep="", end=",")
         item = ls[i].find_all("span")
         hour = item[1].get_text()[:-1]
         stat = item[3].get_text()

@@ -30,7 +30,7 @@ class DetailWeather:
 class ConcecutiveWeather:
     def __init__(
         self,
-        hour: int,  # 시
+        hour: int,  # 시 ( 0 ~ 23 )
         stat: str,  # 날씨 (한국어)
         temp: float,  # 기온
         chill: float,  # 체감온도

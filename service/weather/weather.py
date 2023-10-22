@@ -4,14 +4,10 @@ import requests
 from bs4 import BeautifulSoup
 from fastapi import APIRouter, Request
 
-from service.weather.dto.near_dong_dto import NearDongDto
-from service.weather.dto.weather_dto import DetailWeather, ConcecutiveWeather
+from service.weather.dto.weather_dto import ConcecutiveWeather, DetailWeather
 from service.weather.weather_location_util import find_near_dong
 
 router = APIRouter()
-
-# 날씨정보 시계열, lat lon 쿼리파라미터 추가
-# https://www.weather.go.kr/w/wnuri-fct2021/main/digital-forecast.do?code=1114060500&unit=m%2Fs&hr1=Y&lat=37.5682&lon=126.9977
 
 
 @router.get("/")
@@ -116,7 +112,7 @@ def get_concecutive_weather(
     lon: float,
 ) -> list[ConcecutiveWeather]:
     body = requests.get(
-        "https://www.weather.go.kr/w/wnuri-fct2021/main/digital-forecast.do?code={}}&unit=m%2Fs&hr1=Y&lat={}&lon={}".format(
+        "https://www.weather.go.kr/w/wnuri-fct2021/main/digital-forecast.do?code={}&unit=m%2Fs&hr1=Y&lat={}&lon={}".format(
             code,
             lat,
             lon,
@@ -130,7 +126,7 @@ def get_concecutive_weather(
 
     for i in range(len(ls)):
         item = ls[i].find_all("span")
-        hour = item[1].get_text()[:-1]
+        hour = int(item[1].get_text()[:-1])
         stat = item[3].get_text()
         temp = float(item[5].get_text().split("(")[0][:-1])
         chill = float(item[8].get_text()[:-1])

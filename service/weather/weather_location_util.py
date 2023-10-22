@@ -1,4 +1,5 @@
 import json
+import typing
 import math
 
 import requests
@@ -52,7 +53,7 @@ def dfs_xy_conv(lat: float, lon: float) -> (int, int):  #
     return rs
 
 
-def find_near_dong(lat: float, lon: float) -> NearDongDto:
+def find_near_dong(lat: float, lon: float) -> typing.Union[NearDongDto, None]:
     url = "https://www.weather.go.kr/w/rest/zone/find/dong.do"
     xy = dfs_xy_conv(lat, lon)
     data = {
@@ -64,4 +65,6 @@ def find_near_dong(lat: float, lon: float) -> NearDongDto:
     }
 
     response = requests.get(url, data=data).text[1:-1]
+    if response == "":
+        return None
     return NearDongDto(*(json.loads(response).values()))

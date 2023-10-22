@@ -20,7 +20,8 @@ def weather_detail(
         ip = request.client.host
         lat, lon = get_location(ip)
     data = find_near_dong(lat, lon)
-
+    if data == None:
+        return dict()
     return get_single_weather(data.code, data.lat, data.lon)
 
 
@@ -34,7 +35,8 @@ def weather_list(
         ip = request.client.host
         lat, lon = get_location(ip)
     data = find_near_dong(lat, lon)
-
+    if data == None:
+        return list()
     return get_concecutive_weather(data.code, data.lat, data.lon)
 
 

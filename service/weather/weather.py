@@ -136,6 +136,8 @@ def get_concecutive_weather(
         pred_rain = 0 if pred_rain == "" else int(pred_rain)
         ws = float(item[15].get_text()[:-3])
         wd = item[14].get_text()
+        if ws == 0:  # 풍속이 0이면 '바람없음풍' 으로 출력되는 오류 수정
+            wd = wd[:-1]
         reh = int(item[18].get_text()[:-1])
         ls[i] = ConcecutiveWeather(
             hour=hour,

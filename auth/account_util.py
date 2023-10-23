@@ -1,10 +1,11 @@
+from datetime import datetime, timedelta
 import hashlib
 import os
 import re
 
 import jwt
 
-from auth.dto.return_code import IdValidateCode, PWValidateCode
+from auth.dto.return_code import IdValidateCode, PWValidateCode, JWTValidateCode
 from auth.rule import id_rule, pw_rule
 from core import sql_util
 
@@ -56,26 +57,37 @@ def validate_pw(_id: str, pw: str) -> PWValidateCode:
     return PWValidateCode.SUCCESS
 
 
-def encode_pw(pw: str):
+def encode_pw(pw: str) -> str:
     encoded_pw = str(hashlib.sha3_512((pw + _SALT).encode()).hexdigest())
     encoded_pw += _PEPPER
     return encoded_pw
 
 
-def validate_jwt(jwt_token: str, _id: str) -> bool:
-    user = sql_util.find_user(_id)
-    if user is None:
-        return False
+def validate_jwt(jwt_token: str, id: str) -> JWTValidateCode:
+    user = sql_util.find_user(id)
+    if user == None:
+        return JWTValidateCode.NON_EXIST_USER
     try:
-        jwt.decode(jwt_token, user.jwtKey, algorithms="HS256")
-        return True
+        head = jwt.decode(jwt_token.encode(), user.jwtKey, algorithms="HS256")
+        now = datetime.now().timestamp()
+        if now > head["exp"]:
+            return JWTValidateCode.EXPIRED_TOKEN
+        return JWTValidateCode.AUTHORIZED
     except:
-        return False
+        return JWTValidateCode.UNAUTHORIZED
 
 
-def calculate_jwt(jwt_key: str):
-    # JWT 헤더에 들어갈 데이터 결정
-    jwt_token = jwt.encode({}, jwt_key, algorithm="HS256")
+def calculate_jwt(jwt_key: str) -> str:
+    iat: datetime = datetime.now()
+    exp: datetime = iat + timedelta(days=4)
+    jwt_token = jwt.encode(
+        {
+            "iat": iat.timestamp(),
+            "exp": exp.timestamp(),
+        },
+        jwt_key,
+        algorithm="HS256",
+    )
     return jwt_token
 
 

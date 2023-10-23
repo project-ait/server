@@ -1,6 +1,7 @@
 import datetime
 import hashlib
 import os
+import typing
 
 import psycopg2
 
@@ -31,7 +32,7 @@ _conn = psycopg2.connect(
 ) if not _IS_TEST else None
 
 
-def create_user(id: str, encoded_pw: str) -> UserDto:
+def create_user(id: str, encoded_pw: str) -> typing.Union[UserDto, None]:
     table = "account"
     jwt_key = str(hashlib.sha3_512((id + "/" + encoded_pw).encode()).hexdigest())
     valid_state = "NOT_VALID"
@@ -56,12 +57,11 @@ def create_user(id: str, encoded_pw: str) -> UserDto:
             user = find_user(id)
             _conn.commit()
             return user
-        except Exception as e:
-            print(e)
+        except:
             return None
 
 
-def find_user(id: str) -> UserDto:
+def find_user(id: str) -> typing.Union[UserDto, None]:
     table = "account"
     with _conn.cursor() as cmd:
         cmd.execute(
@@ -73,3 +73,20 @@ def find_user(id: str) -> UserDto:
         rec = cmd.fetchone()
         if rec is not None:
             return UserDto(*rec)
+        return None
+
+
+def delete_user(id: str) -> bool:
+    table = "account"
+    with _conn.cursor() as cmd:
+        try:
+            cmd.execute(
+                'DELETE FROM {} WHERE "userId"={}'.format(
+                    table,
+                    id,
+                )
+            )
+            _conn.commit()
+            return True
+        except:
+            return False

@@ -1,7 +1,7 @@
 import uvicorn
 from fastapi import FastAPI
 
-from auth import auth
+from oauth import auth
 from service.weather import weather
 
 app = FastAPI()

@@ -1,16 +1,16 @@
 class NearDongDto:
     def __init__(
-        self,
-        code: str,
-        name: str,
-        short_name: str,
-        x: int,
-        y: int,
-        lat: float,
-        lon: float,
-        level: int,
-        name_en: str,
-        short_name_en: str,
+            self,
+            code: str,
+            name: str,
+            short_name: str,
+            x: int,
+            y: int,
+            lat: float,
+            lon: float,
+            level: int,
+            name_en: str,
+            short_name_en: str,
     ):
         self.code = code
         self.name = name

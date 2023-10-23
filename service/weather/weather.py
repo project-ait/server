@@ -4,7 +4,7 @@ import requests
 from bs4 import BeautifulSoup
 from fastapi import APIRouter, Request
 
-from service.weather.dto.weather_dto import ConcecutiveWeather, DetailWeather
+from service.weather.dto.weather_dto import WeatherData, WeatherDetail
 from service.weather.weather_location_util import find_near_dong
 
 router = APIRouter()
@@ -12,52 +12,54 @@ router = APIRouter()
 
 @router.get("/")
 def weather_detail(
-    request: Request,
-    lat: float | None = None,
-    lon: float | None = None,
+        request: Request,
+        lat: float | None = None,
+        lon: float | None = None,
 ):
-    if lat == None or lon == None:
+    if lat is None or lon is None:
         ip = request.client.host
         lat, lon = get_location(ip)
     data = find_near_dong(lat, lon)
-    if data == None:
+    if data is None:
         return dict()
     return get_single_weather(data.code, data.lat, data.lon)
 
 
 @router.get("/list")
 def weather_list(
-    request: Request,
-    lat: float | None = None,
-    lon: float | None = None,
+        request: Request,
+        lat: float | None = None,
+        lon: float | None = None,
 ):
-    if lat == None or lon == None:
+    if lat is None or lon is None:
         ip = request.client.host
         lat, lon = get_location(ip)
     data = find_near_dong(lat, lon)
-    if data == None:
+    if data is None:
         return list()
-    return get_concecutive_weather(data.code, data.lat, data.lon)
+    return get_weather_data(data.code, data.lat, data.lon)
 
 
 def get_location(ip: str) -> (float, float):
     _ipinfo_url = "https://ipinfo.io"
     _ipinfo_token = "ed776abe608c8f"
+
     url = "{}/{}?token={}".format(
         _ipinfo_url,
         ip,
         _ipinfo_token,
     )
+
     resp = json.loads(requests.get(url).text)
     loc = resp["loc"].split(",")
     return float(loc[0]), float(loc[1])
 
 
 def get_single_weather(
-    code: str,
-    lat: float,
-    lon: float,
-) -> DetailWeather:
+        code: str,
+        lat: float,
+        lon: float,
+) -> WeatherDetail:
     body = requests.get(
         "https://www.weather.go.kr/w/wnuri-fct2021/main/current-weather.do?&unit=m%2Fs*code={}&aws=N&lat={}&loc={}".format(
             code,
@@ -65,6 +67,7 @@ def get_single_weather(
             lon,
         )
     ).text
+
     soup = BeautifulSoup(body, "html.parser")
 
     ul = soup.find_all("ul")
@@ -94,7 +97,7 @@ def get_single_weather(
     fdst = float(dst_section[1].get_text())
     ffdst = float(dst_section[0].get_text())
 
-    return DetailWeather(
+    return WeatherDetail(
         temp=temp,
         tmin=tmin,
         tmax=tmax,
@@ -108,17 +111,13 @@ def get_single_weather(
     )
 
 
-def get_concecutive_weather(
-    code: str,
-    lat: float,
-    lon: float,
-) -> list[ConcecutiveWeather]:
+def get_weather_data(
+        code: str,
+        lat: float,
+        lon: float,
+) -> list[WeatherData]:
     body = requests.get(
-        "https://www.weather.go.kr/w/wnuri-fct2021/main/digital-forecast.do?code={}&unit=m%2Fs&hr1=Y&lat={}&lon={}".format(
-            code,
-            lat,
-            lon,
-        ),
+        f"https://www.weather.go.kr/w/wnuri-fct2021/main/digital-forecast.do?code={code}&unit=m%2Fs&hr1=Y&lat={lat}&lon={lon}"
     ).text
 
     soup = BeautifulSoup(body, "html.parser")
@@ -127,6 +126,7 @@ def get_concecutive_weather(
     ls = ls[:-24]  # 마지막 24개 (글피 데이터) 삭제
 
     for i in range(len(ls)):
+        # noinspection PyUnresolvedReferences
         item = ls[i].find_all("span")
         hour = int(item[1].get_text()[:-1])
         stat = item[3].get_text()
@@ -141,7 +141,7 @@ def get_concecutive_weather(
         if ws == 0:  # 풍속이 0이면 '바람없음풍' 으로 출력되는 오류 수정
             wd = wd[:-1]
         reh = int(item[18].get_text()[:-1])
-        ls[i] = ConcecutiveWeather(
+        ls[i] = WeatherData(
             hour=hour,
             stat=stat,
             temp=temp,

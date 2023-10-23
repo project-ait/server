@@ -1,6 +1,6 @@
 import json
-import typing
 import math
+import typing
 
 import requests
 
@@ -20,7 +20,7 @@ def dfs_xy_conv(lat: float, lon: float) -> (int, int):  #
     YO = 136  # 기1준점 Y좌표(GRID)
 
     DEGRAD = math.pi / 180
-    RADDEG = 180 / math.pi
+    # RADDEG = 180 / math.pi  # unused
 
     re = RE / GRID
     slat1 = SLAT1 * DEGRAD
@@ -34,11 +34,9 @@ def dfs_xy_conv(lat: float, lon: float) -> (int, int):  #
     sf = math.pow(sf, sn) * math.cos(slat1) / sn
     ro = math.tan(math.pi * 0.25 + olat * 0.5)
     ro = re * sf / math.pow(ro, sn)
-    rs = {}
+    rs = {"lat": lat, "lng": lon}
 
     # to xy convert
-    rs["lat"] = lat
-    rs["lng"] = lon
     ra = math.tan(math.pi * 0.25 + (lat) * DEGRAD * 0.5)
     ra = re * sf / math.pow(ra, sn)
     theta = lon * DEGRAD - olon

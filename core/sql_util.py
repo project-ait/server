@@ -5,7 +5,7 @@ import typing
 
 import psycopg2
 
-from auth.dto.user_dto import UserDto
+from oauth.dto.user_dto import UserDto
 
 _HOST = "localhost"
 _PORT = 5432
@@ -32,9 +32,9 @@ _conn = psycopg2.connect(
 ) if not _IS_TEST else None
 
 
-def create_user(id: str, encoded_pw: str) -> typing.Union[UserDto, None]:
+def create_user(_id: str, encoded_pw: str) -> typing.Union[UserDto, None]:
     table = "account"
-    jwt_key = str(hashlib.sha3_512((id + "/" + encoded_pw).encode()).hexdigest())
+    jwt_key = str(hashlib.sha3_512((_id + "/" + encoded_pw).encode()).hexdigest())
     valid_state = "NOT_VALID"
     state = "ACTIVATE"
     register_timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -45,7 +45,7 @@ def create_user(id: str, encoded_pw: str) -> typing.Union[UserDto, None]:
                     table,
                     '"userId", password, "jwtKey", "validState", state, "registerTimestamp"',
                     "'{}', '{}', '{}', '{}', '{}', '{}'".format(
-                        id,
+                        _id,
                         encoded_pw,
                         jwt_key,
                         valid_state,
@@ -54,20 +54,20 @@ def create_user(id: str, encoded_pw: str) -> typing.Union[UserDto, None]:
                     ),
                 )
             )
-            user = find_user(id)
+            user = find_user(_id)
             _conn.commit()
             return user
         except:
             return None
 
 
-def find_user(id: str) -> typing.Union[UserDto, None]:
+def find_user(_id: str) -> typing.Union[UserDto, None]:
     table = "account"
     with _conn.cursor() as cmd:
         cmd.execute(
             "SELECT * FROM {} WHERE \"userId\"='{}' limit 1".format(
                 table,
-                id,
+                _id,
             )
         )
         rec = cmd.fetchone()
@@ -76,14 +76,14 @@ def find_user(id: str) -> typing.Union[UserDto, None]:
         return None
 
 
-def delete_user(id: str) -> bool:
+def delete_user(_id: str) -> bool:
     table = "account"
     with _conn.cursor() as cmd:
         try:
             cmd.execute(
                 'DELETE FROM {} WHERE "userId"={}'.format(
                     table,
-                    id,
+                    _id,
                 )
             )
             _conn.commit()

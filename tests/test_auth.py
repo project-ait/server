@@ -16,6 +16,7 @@ def test_is_include_not_allowed_char():
         assert account_util.is_include_not_allowed_char(d[0]) == d[1]
 
 
+# noinspection SpellCheckingInspection
 def test_has_consecutive_char():
     data = [
         ["abcd", id_rule.MAX_REPEAT_TIME, True],
@@ -34,12 +35,13 @@ def test_has_consecutive_char():
         assert account_util.has_consecutive_char(d[0], d[1]) == d[2]
 
 
+# noinspection SpellCheckingInspection
 def test_validate_id():
     data = [
         ["testId123", IdValidateCode.ID_REQ_NUMBER],
         ["mwi1102", IdValidateCode.ID_REQ_CHAR],
         ["invalid char", IdValidateCode.ID_NOT_ALLOWED_CHAR],
-        ["normalId12215!@#$", IdValidateCode.SUCCESS],
+        ["normalId12215!@#$", IdValidateCode.NON_EXIST_ID],
         [
             "veryveryloOoooOoooOooOooOooOooOooOooOooOooOooOngId",
             IdValidateCode.ID_TOO_LONG,
@@ -47,7 +49,7 @@ def test_validate_id():
         ["abcd1234", IdValidateCode.ID_TOO_SIMPLE],
         ["repeat9999", IdValidateCode.ID_TOO_SIMPLE],
         ["inverse6543", IdValidateCode.ID_TOO_SIMPLE],
-        ["otherelse4545", IdValidateCode.SUCCESS],
+        ["otherelse4545", IdValidateCode.NON_EXIST_ID],
     ]
     for d in data:
         assert account_util.validate_id(d[0]) == d[1]

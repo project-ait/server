@@ -9,7 +9,7 @@ class IdValidateCode(Enum):
     ID_REQ_NUMBER = 4
     ID_REQ_CHAR = 5
     ID_TOO_SIMPLE = 6
-    SUCCESS = 7
+    NON_EXIST_ID = 7
 
 
 class PWValidateCode(Enum):

@@ -7,3 +7,4 @@ python-dotenv
 PyJWT
 requests
 beautifulsoup4
+openai-whisper

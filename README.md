@@ -2,6 +2,11 @@
 
 ## Development
 
+## Requirement
+- python >=3.11.4
+- pip
+- ffmpeg
+
 ### Prerequisites
 
 - We developed in Python 3.11 ~ 3.12

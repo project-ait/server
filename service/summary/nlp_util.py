@@ -19,4 +19,4 @@ def request_summaryzation(sentence: str) -> str:
     return _client.summarization(
         sentence,
         size=_SUMMARY_SIZE,
-    )
+    )["summary_text"]

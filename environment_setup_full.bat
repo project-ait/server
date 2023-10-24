@@ -26,6 +26,7 @@ set /p db=AIT_DB_NAME:
 set /p salt=AIT_PW_SALT:
 set /p pepper=AIT_PW_PEPPER:
 set /p deepl_key=DEEPL_API_KEY:
+set /p nlp_key=NLP_API_KEY:
 
 echo setting environments...
 :: 사용자 입력을 환경 변수에 저장
@@ -35,5 +36,6 @@ setx AIT_DB_NAME %db%
 setx AIT_PW_SALT %salt%
 setx AIT_PW_PEPPER %pepper%
 setx DEEPL_API_KEY %deepl_key%
+setx NLP_API_KEY %nlp_key%
 echo setup complete
 pause

@@ -24,6 +24,12 @@ _WEATHER_DATA_LIST_URL = "https://www.weather.go.kr/w/wnuri-fct2021/main/digital
 router = APIRouter()
 
 
+@router.get("/dong")
+def dong(request: Request):
+    data = find_near_dong(*get_location(request.client.host))
+    return data
+
+
 @router.get("/")
 def weather_detail(
     request: Request,
@@ -55,8 +61,16 @@ def weather_list(
 
 
 @router.get("/image")
-def weather_picture(locate: str) -> str | None:
+def weather_picture(
+    request: Request,
+    locate: str | None = None,
+) -> str | None:
     uk = "Xo5bJRh7ab1BvzuXlkfaagAAALY"
+
+    if locate == None:
+        lat, lon = get_location(request.client.host)
+        location_data = find_near_dong(lat, lon)
+        locate = location_data.name
 
     conn1 = requests.get(
         _WEATHER_IMG_COOKIE_URL + "q={} 날씨".format(locate),

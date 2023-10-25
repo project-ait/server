@@ -1,0 +1,36 @@
+version: "3"
+
+services:
+  postgres:
+    image: postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: djfudnsqlqjs
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "8080:8080"
+
+  ait:
+    build: .
+    ports:
+      - "1777:1777"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      AIT_DB_HOST: postgres
+      AIT_DB_USER: postgres
+      AIT_DB_PW: djfudnsqlqjs
+      AIT_DB_NAME: postgres
+      AIT_PW_SALT: soltebe
+      AIT_PW_PEPPER: peterparker

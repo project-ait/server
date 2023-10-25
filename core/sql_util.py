@@ -7,11 +7,16 @@ import psycopg2
 
 from oauth.dto.user_dto import UserDto
 
-_HOST = os.environ.get("AIT_DB_HOST")
-_PORT = 5432
-_USER = os.environ.get("AIT_DB_USER")
-_PW = os.environ.get("AIT_DB_PW")
-_DATABASE = os.environ.get("AIT_DB_NAME")
+
+def env(key):
+    return os.environ.get(key)
+
+
+_HOST = env("AIT_DB_HOST")
+_PORT = env("AIT_DB_PORT")
+_USER = env("AIT_DB_USER")
+_PW = env("AIT_DB_PW")
+_DATABASE = env("AIT_DB_NAME")
 
 _IS_TEST = os.environ.get("IS_TEST")
 

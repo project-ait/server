@@ -32,6 +32,28 @@ _conn = psycopg2.connect(
 ) if not _IS_TEST else None
 
 
+def check_and_create_table():
+    print("Checking Table...")
+    table = "account"
+    with _conn.cursor() as cmd:
+        cmd.execute(
+            """
+            CREATE TABLE IF NOT EXISTS {} (
+                id SERIAL PRIMARY KEY,
+                "userId" character varying(20) NOT NULL UNIQUE,
+                password character varying(256) NOT NULL,
+                "jwtKey" character varying(128) NOT NULL,
+                "validState" character varying(20) NOT NULL,
+                state character varying(20) NOT NULL,
+                "registerTimestamp" timestamp without time zone NOT NULL,
+                "validTimestamp" timestamp without time zone,
+                email character varying(30)
+            )
+            """.format(table)
+        )
+        _conn.commit()
+
+
 def create_user(_id: str, encoded_pw: str) -> typing.Union[UserDto, None]:
     table = "account"
     jwt_key = str(hashlib.sha3_512((_id + "/" + encoded_pw).encode()).hexdigest())

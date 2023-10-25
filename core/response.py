@@ -24,4 +24,6 @@ class Response:
     def __iter__(self):
         for key in self.__dict__:
             attr = getattr(self, key)
-            yield key, str(attr)
+            if isinstance(attr, ResponseStatus):
+                attr = attr.name
+            yield key, attr

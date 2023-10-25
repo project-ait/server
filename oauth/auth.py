@@ -15,7 +15,7 @@ def register_user(_id: str, pw: str) -> Response:
     if id_val_code != IdValidateCode.NON_EXIST_ID:
         return Response(
             ResponseStatus.fail,
-            {"code": IdValidateCode.name},
+            {"code": id_val_code.name},
         )
 
     pw_val_code = validate_pw(_id, pw)

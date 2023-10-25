@@ -6,4 +6,4 @@ psycopg2
 python-dotenv
 PyJWT
 requests
-beautifulsoup4 
+beautifulsoup4

@@ -6,12 +6,14 @@ from fastapi import FastAPI
 
 from core.sql_util import check_and_create_table
 from oauth import auth
+from service.summary import summary
 from service.weather import weather
 
 app = FastAPI()
 
 app.include_router(auth.router, prefix="/auth", tags=["auth"])
-app.include_router(weather.router, prefix="/service/weather")
+app.include_router(weather.router, prefix="/service/weather", tags=["weather"])
+app.include_router(summary.router, prefix="/service/summary", tags=["summary"])
 
 check_and_create_table()
 

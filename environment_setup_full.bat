@@ -18,16 +18,26 @@ if '%errorlevel%' NEQ '0' (
 
 setlocal enabledelayedexpansion
 
+echo "¸ğµç º¯¼ö¸¦ ¼³Á¤ÇÏ´Â ÇÁ·Î±×·¥ ÀÔ´Ï´Ù"
+echo "°ü¸®ÀÚ¸¸ ¼öÇàÇÏ¸é µÇ´Â ÀÛ¾÷ÀÔ´Ï´Ù"
 set /p user=AIT_DB_USER: 
 set /p pw=AIT_DB_PW: 
 set /p db=AIT_DB_NAME: 
+set /p salt=AIT_PW_SALT:
+set /p pepper=AIT_PW_PEPPER:
+set /p deepl_key=DEEPL_API_KEY:
+set /p nlp_key=NLP_API_KEY:
+set /p ipinfo_key=IPINFO_TOKEN:
 
 echo setting environments...
-:: ì´ì „ ë³€ìˆ˜ ê°’ì´ ì¡´ì¬í•œë‹¤ë©´ ì œê±°
-:: set "AIT_DB_USER="
-:: ì‚¬ìš©ì ì…ë ¥ì„ í™˜ê²½ ë³€ìˆ˜ì— ì €ì¥
+:: »ç¿ëÀÚ ÀÔ·ÂÀ» È¯°æ º¯¼ö¿¡ ÀúÀå
 setx AIT_DB_USER %user%
 setx AIT_DB_PW %pw%
 setx AIT_DB_NAME %db%
+setx AIT_PW_SALT %salt%
+setx AIT_PW_PEPPER %pepper%
+setx DEEPL_API_KEY %deepl_key%
+setx NLP_API_KEY %nlp_key%
+setx IPINFO_TOKEN %ipinfo_key%
 echo setup complete
 pause

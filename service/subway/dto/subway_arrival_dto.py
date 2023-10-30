@@ -15,9 +15,14 @@ class SubwayArrivalDto:
 
     @classmethod
     def from_json(cls, data: dict):
+        error_msg = data.get["errorMessage"]
         return cls(
-            error_msg=SubwayErrorMsgDto.from_json(data["errorMessage"]),
+            error_msg=SubwayErrorMsgDto.from_json(
+                error_msg if error_msg is not None else data
+            ),
             items=[
                 SubwayArrivalItemDto.from_json(e) for e in data["realtimeArrivalList"]
-            ],
+            ]
+            if error_msg is not None
+            else [],
         )

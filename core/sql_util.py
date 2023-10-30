@@ -3,7 +3,7 @@ import hashlib
 import os
 import typing
 
-import psycopg2
+import sqlite3
 
 from oauth.dto.user_dto import UserDto
 
@@ -12,51 +12,36 @@ def env(key):
     return os.environ.get(key)
 
 
-_HOST = env("AIT_DB_HOST")
-_PORT = env("AIT_DB_PORT")
-_USER = env("AIT_DB_USER")
-_PW = env("AIT_DB_PW")
-_DATABASE = env("AIT_DB_NAME")
+_DIR = "./database.sqlite"
+_IS_TEST = env("IS_TEST")
 
-_IS_TEST = os.environ.get("IS_TEST")
 
-if not _IS_TEST:
-    if _USER is None:
-        raise Exception("DB 접속 유저 이름이 설정되지 않았습니다")
-    if _PW is None:
-        raise Exception("DB 접속 암호가 설정되지 않았습니다")
-    if _DATABASE is None:
-        raise Exception("접속할 DB 이름을 설정하지 않았습니다")
-
-_conn = psycopg2.connect(
-    host=_HOST,
-    dbname=_DATABASE,
-    user=_USER,
-    password=_PW,
-    port=_PORT,
-) if not _IS_TEST else None
+_conn = sqlite3.connect(_DIR) if not _IS_TEST else None
 
 
 def check_and_create_table():
     print("Checking Table...")
     table = "account"
-    with _conn.cursor() as cmd:
-        cmd.execute(
-            """
-            CREATE TABLE IF NOT EXISTS {} (
-                id SERIAL PRIMARY KEY,
-                "userId" character varying(20) NOT NULL UNIQUE,
-                password character varying(256) NOT NULL,
-                "jwtKey" character varying(128) NOT NULL,
-                "validState" character varying(20) NOT NULL,
-                state character varying(20) NOT NULL,
-                "registerTimestamp" timestamp without time zone NOT NULL,
-                "validTimestamp" timestamp without time zone,
-                email character varying(30)
-            )
-            """.format(table)
+    cmd = _conn.cursor()
+    cmd.execute(
+        """
+        CREATE TABLE IF NOT EXISTS {} (
+            id SERIAL PRIMARY KEY,
+            "userId" character varying(20) NOT NULL UNIQUE,
+            password character varying(256) NOT NULL,
+            "jwtKey" character varying(128) NOT NULL,
+            "validState" character varying(20) NOT NULL,
+            state character varying(20) NOT NULL,
+            "registerTimestamp" timestamp without time zone NOT NULL,
+            "validTimestamp" timestamp without time zone,
+            email character varying(30)
         )
-        _conn.commit()
+        """.format(
+            table
+        )
+    )
+    _conn.commit()
+    cmd.close()
 
 
 def create_user(_id: str, encoded_pw: str) -> typing.Union[UserDto, None]:
@@ -65,55 +50,60 @@ def create_user(_id: str, encoded_pw: str) -> typing.Union[UserDto, None]:
     valid_state = "NOT_VALID"
     state = "ACTIVATE"
     register_timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    with _conn.cursor() as cmd:
-        try:
-            cmd.execute(
-                "INSERT INTO {} ({}) VALUES ({})".format(
-                    table,
-                    '"userId", password, "jwtKey", "validState", state, "registerTimestamp"',
-                    "'{}', '{}', '{}', '{}', '{}', '{}'".format(
-                        _id,
-                        encoded_pw,
-                        jwt_key,
-                        valid_state,
-                        state,
-                        register_timestamp,
-                    ),
-                )
+    cmd = _conn.cursor()
+    try:
+        cmd.execute(
+            "INSERT INTO {} ({}) VALUES ({})".format(
+                table,
+                '"userId", password, "jwtKey", "validState", state, "registerTimestamp"',
+                "'{}', '{}', '{}', '{}', '{}', '{}'".format(
+                    _id,
+                    encoded_pw,
+                    jwt_key,
+                    valid_state,
+                    state,
+                    register_timestamp,
+                ),
             )
-            user = find_user(_id)
-            _conn.commit()
-            return user
-        except:
-            return None
+        )
+        user = find_user(_id)
+        _conn.commit()
+        return user
+    except:
+        return None
+    finally:
+        cmd.close()
 
 
 def find_user(_id: str) -> typing.Union[UserDto, None]:
     table = "account"
-    with _conn.cursor() as cmd:
-        cmd.execute(
-            "SELECT * FROM {} WHERE \"userId\"='{}' limit 1".format(
-                table,
-                _id,
-            )
+    cmd = _conn.cursor()
+    cmd.execute(
+        "SELECT * FROM {} WHERE \"userId\"='{}' limit 1".format(
+            table,
+            _id,
         )
-        rec = cmd.fetchone()
-        if rec is not None:
-            return UserDto(*rec)
-        return None
+    )
+    rec = cmd.fetchone()
+    cmd.close()
+    if rec is not None:
+        return UserDto(*rec)
+    return None
 
 
 def delete_user(_id: str) -> bool:
     table = "account"
-    with _conn.cursor() as cmd:
-        try:
-            cmd.execute(
-                'DELETE FROM {} WHERE "userId"={}'.format(
-                    table,
-                    _id,
-                )
+    cmd = _conn.cursor()
+    try:
+        cmd.execute(
+            'DELETE FROM {} WHERE "userId"={}'.format(
+                table,
+                _id,
             )
-            _conn.commit()
-            return True
-        except:
-            return False
+        )
+        _conn.commit()
+        return True
+    except:
+        return False
+    finally:
+        cmd.close()

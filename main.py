@@ -6,6 +6,8 @@ from fastapi import FastAPI
 
 from core.sql_util import check_and_create_table
 from oauth import auth
+from service.summary.nlp_util import update_nlp_client
+
 from service.subway import subway
 from service.summary import summary
 from service.weather import weather
@@ -26,15 +28,15 @@ def root():
 
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", port=1777, reload=True)
-
+    print("ENV >> Check .env file...")
     if not os.path.exists(".env"):
-        print(
-            "ENV >> Cannot found .env file, use pre-configured environment variables."
-        )
-        print(
-            "ENV >> If not prepared environment variables, server will be throw exception."
-        )
+        print("""
+            ENV >> Cannot found .env file, use pre-configured environment variables.
+            ENV >> If not prepared environment variables, server will be throw exception.
+            """)
     else:
-        print("ENV >> Found .env file! load environment variables from .env file.")
+        print("ENV >> DotEnv File Found! load environment variables from .env file.")
         load_dotenv()
+        update_nlp_client()
+
+    uvicorn.run("main:app", port=1777, reload=True)

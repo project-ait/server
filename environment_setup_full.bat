@@ -20,9 +20,6 @@ setlocal enabledelayedexpansion
 
 echo "모든 변수를 설정하는 프로그램 입니다"
 echo "관리자만 수행하면 되는 작업입니다"
-set /p user=AIT_DB_USER: 
-set /p pw=AIT_DB_PW: 
-set /p db=AIT_DB_NAME: 
 set /p salt=AIT_PW_SALT:
 set /p pepper=AIT_PW_PEPPER:
 set /p deepl_key=DEEPL_API_KEY:
@@ -31,10 +28,7 @@ set /p ipinfo_key=IPINFO_TOKEN:
 set /p subway_key=SUBWAY_API_KEY:
 
 echo setting environments...
-:: 사용자 입력을 환경 변수에 저장
-setx AIT_DB_USER %user%
-setx AIT_DB_PW %pw%
-setx AIT_DB_NAME %db%
+:: 사용자 입력을 환경 변수에 저장setx AIT_DB_USER %user%
 setx AIT_PW_SALT %salt%
 setx AIT_PW_PEPPER %pepper%
 setx DEEPL_API_KEY %deepl_key%

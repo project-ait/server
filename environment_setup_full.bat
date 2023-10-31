@@ -28,6 +28,7 @@ set /p pepper=AIT_PW_PEPPER:
 set /p deepl_key=DEEPL_API_KEY:
 set /p nlp_key=NLP_API_KEY:
 set /p ipinfo_key=IPINFO_TOKEN:
+set /p subway_key=SUBWAY_API_KEY:
 
 echo setting environments...
 :: 사용자 입력을 환경 변수에 저장
@@ -39,5 +40,6 @@ setx AIT_PW_PEPPER %pepper%
 setx DEEPL_API_KEY %deepl_key%
 setx NLP_API_KEY %nlp_key%
 setx IPINFO_TOKEN %ipinfo_key%
+setx SUBWAY_API_KEY %subway_key%
 echo setup complete
 pause

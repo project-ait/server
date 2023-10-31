@@ -4,3 +4,6 @@ python-multipart
 PyJWT
 requests
 beautifulsoup4
+openai-whisper
+nlpcloud
+transformers

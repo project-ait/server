@@ -1,9 +1,8 @@
 import datetime
 import hashlib
 import os
-import typing
-
 import sqlite3
+import typing
 
 from oauth.dto.user_dto import UserDto
 
@@ -12,36 +11,42 @@ def env(key):
     return os.environ.get(key)
 
 
-_DIR = "./database.sqlite"
-_IS_TEST = env("IS_TEST")
+_sqlite_path = "./database.sqlite"
+is_test = env("IS_TEST")
 
+if not os.path.exists(_sqlite_path):
+    with open(_sqlite_path, "w") as f:
+        f.write("")
+        f.close()
 
-_conn = sqlite3.connect(_DIR) if not _IS_TEST else None
+_conn = sqlite3.connect(_sqlite_path) if not is_test else None
 
 
 def check_and_create_table():
     print("Checking Table...")
-    table = "account"
-    cmd = _conn.cursor()
-    cmd.execute(
-        """
-        CREATE TABLE IF NOT EXISTS {} (
-            id SERIAL PRIMARY KEY,
-            "userId" character varying(20) NOT NULL UNIQUE,
-            password character varying(256) NOT NULL,
-            "jwtKey" character varying(128) NOT NULL,
-            "validState" character varying(20) NOT NULL,
-            state character varying(20) NOT NULL,
-            "registerTimestamp" timestamp without time zone NOT NULL,
-            "validTimestamp" timestamp without time zone,
-            email character varying(30)
-        )
-        """.format(
-            table
-        )
-    )
-    _conn.commit()
-    cmd.close()
+    try:
+        if _conn is None:
+            sqlite3.connect(_sqlite_path)
+        else:
+            table = "account"
+            cur = _conn.cursor()
+            cur.execute(f"""
+                CREATE TABLE IF NOT EXISTS {table} (
+                    id SERIAL PRIMARY KEY,
+                    "userId" character varying(20) NOT NULL UNIQUE,
+                    password character varying(256) NOT NULL,
+                    "jwtKey" character varying(128) NOT NULL,
+                    "validState" character varying(20) NOT NULL,
+                    state character varying(20) NOT NULL,
+                    "registerTimestamp" timestamp without time zone NOT NULL,
+                    "validTimestamp" timestamp without time zone,
+                    email character varying(30)
+                )
+                """)
+            _conn.commit()
+            cur.close()
+    except ValueError as ve:
+        print(f"An error occurred: {ve}")
 
 
 def create_user(_id: str, encoded_pw: str) -> typing.Union[UserDto, None]:
@@ -69,8 +74,8 @@ def create_user(_id: str, encoded_pw: str) -> typing.Union[UserDto, None]:
         user = find_user(_id)
         _conn.commit()
         return user
-    except:
-        return None
+    except Exception as e:
+        print(e)
     finally:
         cmd.close()
 

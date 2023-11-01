@@ -5,9 +5,9 @@ from tempfile import NamedTemporaryFile
 from fastapi import APIRouter, UploadFile
 
 from core.response import Response, ResponseStatus
-from service.summary.bart_util import bart_summaryzation
-from service.summary.deepl_util import LangCode, request_translate
-from service.summary.nlp_util import request_nlp_summaryzation
+from service.summary.bart_util import generate_summary
+from service.deepl import LangCode, translate
+from service.summary.nlp_util import text_summary
 from service.summary.stt.whisper_util import speech_to_text
 
 _MIN_TEXT_LEN = 100
@@ -41,7 +41,7 @@ def summary(audio_file: UploadFile):
         )
 
     # 내용 요약 모델을 위해 한국어를 영어로 번역
-    translated_en = request_translate(stt, source=LangCode.KO, target=LangCode.EN)
+    translated_en = translate(stt, source=LangCode.KO, target=LangCode.EN)
     if translated_en == None:
         return Response(
             ResponseStatus.fail,
@@ -50,13 +50,13 @@ def summary(audio_file: UploadFile):
 
     # NLP 혹은 BART 모델을 이용해 내용 요약
     summarized_model = "NLP"
-    summarized = request_nlp_summaryzation(translated_en)
+    summarized = text_summary(translated_en)
     if summarized == None:
-        summarized = bart_summaryzation(translated_en)
+        summarized = generate_summary(translated_en)
         summarized_model = "bart"
 
     # 사용자에게 전달하기 위해 영어 요약 내용을 한국어로 번역
-    translated_ko = request_translate(
+    translated_ko = translate(
         summarized, source=LangCode.EN, target=LangCode.KO
     )
     if translated_ko == None:

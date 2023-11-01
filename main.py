@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 
 from core.sql_util import check_and_create_table
-from routers import deepl, location, subway, summary, weather, auth
+from routers import deepl, location, subway, weather, auth
 
 # from service.summary.nlp_util import update_nlp_client
 
@@ -13,7 +13,7 @@ app = FastAPI()
 
 app.include_router(auth.router, prefix="/auth", tags=["auth"])
 app.include_router(weather.router, prefix="/service/weather", tags=["weather"])
-app.include_router(summary.router, prefix="/service/summary", tags=["summary"])
+# app.include_router(summary.router, prefix="/service/summary", tags=["summary"])
 app.include_router(subway.router, prefix="/service/subway", tags=["subway"])
 app.include_router(deepl.router, prefix="/service/deepl", tags=["deepl"])
 app.include_router(location.router, prefix="/service/location", tags=["ipinfo"])

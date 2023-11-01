@@ -108,7 +108,8 @@ def delete_user(_id: str) -> bool:
         )
         _conn.commit()
         return True
-    except:
+    except Exception as e:
+        print(e)
         return False
     finally:
         cmd.close()

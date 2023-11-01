@@ -5,6 +5,7 @@ import requests
 from bs4 import BeautifulSoup
 from fastapi import APIRouter, Request
 
+from service.location import get_location
 from service.weather.dto.weather_dto import WeatherData, WeatherDetail
 from service.weather.weather_location_util import find_near_dong
 
@@ -102,17 +103,6 @@ def weather_picture(
 
     return json.loads(res.text)["RESULT"]["WEATHER_BALLOON"]["result"]
 
-
-def get_location(ip: str) -> (float, float):
-    url = "{}/{}?token={}".format(
-        _IPINFO_URL,
-        ip,
-        _IPINFO_TOKEN,
-    )
-
-    resp = json.loads(requests.get(url).text)
-    loc = resp["loc"].split(",")
-    return float(loc[0]), float(loc[1])
 
 
 def get_single_weather(

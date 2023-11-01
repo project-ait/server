@@ -6,9 +6,7 @@ from fastapi import FastAPI
 
 from core.sql_util import check_and_create_table
 from oauth import auth
-from routers import deepl
-from service.summary.nlp_util import update_nlp_client
-
+from routers import deepl, location
 from service.subway import subway
 from service.summary import summary
 from service.weather import weather
@@ -20,6 +18,7 @@ app.include_router(weather.router, prefix="/service/weather", tags=["weather"])
 app.include_router(summary.router, prefix="/service/summary", tags=["summary"])
 app.include_router(subway.router, prefix="/service/subway", tags=["subway"])
 app.include_router(deepl.router, prefix="/service/deepl", tags=["deepl"])
+app.include_router(location.router, prefix="/service/location", tags=["ipinfo"])
 
 check_and_create_table()
 

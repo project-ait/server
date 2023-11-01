@@ -5,7 +5,8 @@ python-multipart
 python-dotenv
 PyJWT
 requests
-beautifulsoup4 
+beautifulsoup4
 openai-whisper
 nlpcloud
 transformers
+ipinfo

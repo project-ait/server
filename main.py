@@ -9,6 +9,7 @@ from oauth import auth
 from routers import deepl, location
 from service.subway import subway
 from service.summary import summary
+# from service.summary.nlp_util import update_nlp_client
 from service.weather import weather
 
 app = FastAPI()
@@ -38,6 +39,6 @@ if __name__ == "__main__":
     else:
         print("ENV >> DotEnv File Found! load environment variables from .env file.")
         load_dotenv()
-        update_nlp_client()
+        # update_nlp_client()
 
     uvicorn.run("main:app", port=1777, reload=True)

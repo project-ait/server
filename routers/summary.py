@@ -5,13 +5,12 @@ from tempfile import NamedTemporaryFile
 from fastapi import APIRouter, UploadFile
 
 from core.response import Response, ResponseStatus
-from service.summary.bart_util import bart_summaryzation
-from service.summary.deepl_util import LangCode, request_translate
-from service.summary.nlp_util import request_nlp_summaryzation
+# from service.summary.bart_util import generate_summary
+from service.deepl import LangCode, translate
+from service.summary.nlp_util import text_summary
 from service.summary.stt.whisper_util import speech_to_text
 
 _MIN_TEXT_LEN = 100
-
 
 router = APIRouter()
 
@@ -26,7 +25,8 @@ def summary(audio_file: UploadFile):
     # 파일을 읽어 텍스트 데이터로 변환 AI
     stt = speech_to_text(tmp_file.name)
     tmp_file.close()
-    if stt == None:
+
+    if stt is None:
         return Response(
             ResponseStatus.fail,
             {"code": SummaryResponseCode.FILE_CANNOT_READ.name},
@@ -41,8 +41,8 @@ def summary(audio_file: UploadFile):
         )
 
     # 내용 요약 모델을 위해 한국어를 영어로 번역
-    translated_en = request_translate(stt, source=LangCode.KO, target=LangCode.EN)
-    if translated_en == None:
+    translated_en = translate(stt, source=LangCode.KO, target=LangCode.EN)
+    if translated_en is None:
         return Response(
             ResponseStatus.fail,
             {"code": SummaryResponseCode.SERVICE_NOT_AVAILABLE.name},
@@ -50,16 +50,16 @@ def summary(audio_file: UploadFile):
 
     # NLP 혹은 BART 모델을 이용해 내용 요약
     summarized_model = "NLP"
-    summarized = request_nlp_summaryzation(translated_en)
-    if summarized == None:
-        summarized = bart_summaryzation(translated_en)
-        summarized_model = "bart"
+    summarized = text_summary(translated_en)
+    # if summarized == None:
+    #     summarized = generate_summary(translated_en)
+    #     summarized_model = "bart"
 
     # 사용자에게 전달하기 위해 영어 요약 내용을 한국어로 번역
-    translated_ko = request_translate(
+    translated_ko = translate(
         summarized, source=LangCode.EN, target=LangCode.KO
     )
-    if translated_ko == None:
+    if translated_ko is None:
         return Response(
             ResponseStatus.fail,
             {"code": SummaryResponseCode.SERVICE_NOT_AVAILABLE.name},

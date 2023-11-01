@@ -7,6 +7,7 @@ import requests
 from service.weather.dto.near_dong_dto import NearDongDto
 
 
+# noinspection PyPep8Naming
 def dfs_xy_conv(lat: float, lon: float) -> (int, int):  #
     # LCC DFS 좌표변환을 위한 기초 자료
     #

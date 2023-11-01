@@ -4,7 +4,7 @@ import os
 import sqlite3
 import typing
 
-from oauth.dto.user_dto import UserDto
+from service.oauth.dto.user_dto import UserDto
 
 
 def env(key):

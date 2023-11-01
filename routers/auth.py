@@ -2,8 +2,8 @@ from fastapi import APIRouter
 
 from core import sql_util
 from core.response import Response, ResponseStatus
-from oauth.account_util import calculate_jwt, encode_pw, validate_pw, validate_id, validate_jwt
-from oauth.dto.return_code import IdValidateCode, PWValidateCode, JWTValidateCode
+from service.oauth.account_util import calculate_jwt, encode_pw, validate_pw, validate_id, validate_jwt
+from service.oauth.dto.return_code import IdValidateCode, PWValidateCode, JWTValidateCode
 
 router = APIRouter()
 

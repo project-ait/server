@@ -6,12 +6,12 @@ from datetime import datetime, timedelta
 import jwt
 
 from core import sql_util
-from oauth.dto.return_code import (
+from service.oauth.dto.return_code import (
     IdValidateCode as IdValid,
     PWValidateCode as PwValid,
     JWTValidateCode as JWTValid
 )
-from oauth.rule.id_rule import ALLOWED_CHAR_RE
+from service.oauth.rule.id_rule import ALLOWED_CHAR_RE
 
 _SALT = os.environ.get("AIT_PW_SALT")  # admin only
 _PEPPER = os.environ.get("AIT_PW_PEPPER")  # admin only
@@ -19,7 +19,7 @@ _PEPPER = os.environ.get("AIT_PW_PEPPER")  # admin only
 
 # noinspection DuplicatedCode
 def validate_id(_id: str) -> IdValid:
-    from oauth.rule.id_rule import (
+    from service.oauth.rule.id_rule import (
         MAX_LENGTH, MIN_LENGTH,
         MIN_CHAR_LEN, MIN_NUMBER_LEN,
         MAX_REPEAT_TIME
@@ -48,7 +48,7 @@ def validate_id(_id: str) -> IdValid:
 
 # noinspection DuplicatedCode
 def validate_pw(_id: str, pw: str) -> PwValid:
-    from oauth.rule.pw_rule import (
+    from service.oauth.rule.pw_rule import (
         MAX_LENGTH, MIN_LENGTH,
         MIN_CHAR_LEN, MIN_NUMBER_LEN,
         MAX_REPEAT_TIME, MAX_ID_SIMILARITY

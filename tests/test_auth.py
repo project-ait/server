@@ -1,6 +1,6 @@
-from oauth import account_util
-from oauth.dto.return_code import IdValidateCode
-from oauth.rule import id_rule
+from service.oauth import account_util
+from service.oauth.dto.return_code import IdValidateCode
+from service.oauth.rule import id_rule
 
 
 def test_is_include_not_allowed_char():

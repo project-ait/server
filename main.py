@@ -5,12 +5,9 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 
 from core.sql_util import check_and_create_table
-from oauth import auth
-from routers import deepl, location
-from service.subway import subway
-from service.summary import summary
+from routers import deepl, location, subway, summary, weather, auth
+
 # from service.summary.nlp_util import update_nlp_client
-from service.weather import weather
 
 app = FastAPI()
 

@@ -5,8 +5,8 @@ WORKDIR /api
 
 RUN pip install -r requirements-deploy.txt
 
-# Create 'database.sqlite' and adjust permissions
-RUN touch /api/database.sqlite && chmod 775 /api/database.sqlite
+# Create 'database.sqlite' file, adjust permissions on file and its directory
+RUN touch /api/database.sqlite && chmod 775 /api/database.sqlite && chmod 775 /api
 
 EXPOSE 1777
 

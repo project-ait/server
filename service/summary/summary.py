@@ -12,7 +12,6 @@ from service.summary.stt.whisper_util import speech_to_text
 
 _MIN_TEXT_LEN = 100
 
-
 router = APIRouter()
 
 
@@ -26,7 +25,8 @@ def summary(audio_file: UploadFile):
     # 파일을 읽어 텍스트 데이터로 변환 AI
     stt = speech_to_text(tmp_file.name)
     tmp_file.close()
-    if stt == None:
+
+    if stt is None:
         return Response(
             ResponseStatus.fail,
             {"code": SummaryResponseCode.FILE_CANNOT_READ.name},
@@ -42,7 +42,7 @@ def summary(audio_file: UploadFile):
 
     # 내용 요약 모델을 위해 한국어를 영어로 번역
     translated_en = translate(stt, source=LangCode.KO, target=LangCode.EN)
-    if translated_en == None:
+    if translated_en is None:
         return Response(
             ResponseStatus.fail,
             {"code": SummaryResponseCode.SERVICE_NOT_AVAILABLE.name},
@@ -59,7 +59,7 @@ def summary(audio_file: UploadFile):
     translated_ko = translate(
         summarized, source=LangCode.EN, target=LangCode.KO
     )
-    if translated_ko == None:
+    if translated_ko is None:
         return Response(
             ResponseStatus.fail,
             {"code": SummaryResponseCode.SERVICE_NOT_AVAILABLE.name},

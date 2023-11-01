@@ -1,8 +1,8 @@
-from enum import StrEnum
+from enum import Enum
 from typing import List
 
 
-class SubwayId(StrEnum):
+class SubwayId(str, Enum):
     s1001 = "1호선"
     s1002 = "2호선"
     s1003 = "3호선"
@@ -23,7 +23,7 @@ class SubwayId(StrEnum):
     s1081 = "경강선"
 
 
-class ArrivalCode(StrEnum):
+class ArrivalCode(str, Enum):
     a0 = "진입"
     a1 = "도착"
     a2 = "출발"

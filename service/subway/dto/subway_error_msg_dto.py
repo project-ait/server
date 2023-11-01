@@ -1,7 +1,7 @@
-from enum import StrEnum
+from enum import Enum
 
 
-class SubwayErrorCode(StrEnum):
+class SubwayErrorCode(str, Enum):
     INFO000 = "정상 처리되었습니다."
     ERROR300 = "필수 값이 누락되어 있습니다."
     INFO100 = "인증키가 유효하지 않습니다."

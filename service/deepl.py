@@ -1,6 +1,6 @@
 import json
 import os
-from enum import StrEnum
+from enum import Enum
 from urllib import parse
 
 import requests
@@ -9,7 +9,7 @@ _URL = "https://api-free.deepl.com/v2/translate"
 _DEEPL_API_KEY = os.environ.get("DEEPL_API_KEY")
 
 
-class LangCode(StrEnum):
+class LangCode(str, Enum):
     KO = "KO"
     EN = "EN"
 

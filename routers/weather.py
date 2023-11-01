@@ -30,14 +30,14 @@ def dong(request: Request):
 
 
 @router.get("/")
-def weather_detail(
+async def weather_detail(
         request: Request,
         lat: float | None = None,
         lon: float | None = None,
 ):
     if lat is None or lon is None:
         ip = request.client.host
-        lat, lon = get_location(ip)
+        lat, lon = await get_location(ip)
     data = find_near_dong(lat, lon)
     if data is None:
         return dict()
@@ -45,14 +45,14 @@ def weather_detail(
 
 
 @router.get("/list")
-def weather_list(
+async def weather_list(
         request: Request,
         lat: float | None = None,
         lon: float | None = None,
 ):
     if lat is None or lon is None:
         ip = request.client.host
-        lat, lon = get_location(ip)
+        lat, lon = await get_location(ip)
     data = find_near_dong(lat, lon)
     if data is None:
         return list()
@@ -60,14 +60,14 @@ def weather_list(
 
 
 @router.get("/image")
-def weather_picture(
+async def weather_picture(
         request: Request,
         locate: str | None = None,
 ) -> str | None:
     uk = "Xo5bJRh7ab1BvzuXlkfaagAAALY"
 
     if locate is None:
-        lat, lon = get_location(request.client.host)
+        lat, lon = await get_location(request.client.host)
         location_data = find_near_dong(lat, lon)
         locate = location_data.name
 

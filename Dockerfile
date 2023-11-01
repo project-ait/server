@@ -6,8 +6,8 @@ WORKDIR /api
 RUN pip install -r requirements-deploy.txt
 
 RUN touch /api/database.sqlite \
-    && chmod 664 /api/database.sqlite \
-    && chmod 775 /api
+    && chmod 777 /api/database.sqlite \
+    && chmod 777 /api
 
 EXPOSE 1777
 

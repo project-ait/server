@@ -29,7 +29,10 @@ def request_subway_data(station_name: str):
             station_name,
         )
     )
-
-    data = SubwayArrivalDto.from_json(json.loads(response.text))
-    data.items.sort(key=lambda x: x.pred_sec)
-    return data
+    try:
+        data = SubwayArrivalDto.from_json(json.loads(response.text))
+        data.items.sort(key=lambda x: x.pred_sec)
+        return data
+    except Exception as e:
+        print(F"역을 찾을 수 없습니다: {e}")
+        return None

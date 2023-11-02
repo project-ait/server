@@ -15,7 +15,7 @@ _DATA_COUNT = "20"
 router = APIRouter()
 
 
-@router.get("/")
+@router.post("/")
 def request_subway_data(station_name: str):
     response = requests.get(
         "{}/{}/{}/{}/{}/{}/{}".format(

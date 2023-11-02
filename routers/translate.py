@@ -21,4 +21,4 @@ async def translate(data: TranslatedModel):
 
 @router.post("/toEn")
 async def translate(data: TranslatedModel):
-    return translator.translate_text(data.text, source_lang="KO", target_lang="EN")
+    return translator.translate_text(data.text, source_lang="KO", target_lang="EN-US")

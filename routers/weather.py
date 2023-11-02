@@ -41,7 +41,8 @@ async def weather_detail(
     data = find_near_dong(lat, lon)
     if data is None:
         return dict()
-    return get_single_weather(data.code, data.lat, data.lon)
+
+    return get_single_weather(data.code, data.lat, data.lon, dong=data.name)
 
 
 @router.get("/list")
@@ -108,6 +109,7 @@ def get_single_weather(
         code: str,
         lat: float,
         lon: float,
+        dong: str | None = None,
 ) -> WeatherDetail:
     body = requests.get(
         _SINGLE_WEATHER_DATA_URL
@@ -154,6 +156,7 @@ def get_single_weather(
         wd=wd,
         fdst=fdst,
         ffdst=ffdst,
+        dong=dong,
     )
 
 

@@ -14,6 +14,7 @@ class WeatherDetail:
             wd: str,  # 풍향 (한국어)
             fdst: float,  # 미세먼지 (ug/m)
             ffdst: float,  # 초미세먼지 (ug/m)
+            dong: str
     ):
         self.temp = temp
         self.tmin = tmin
@@ -25,6 +26,7 @@ class WeatherDetail:
         self.wd = wd
         self.fdst = fdst
         self.ffdst = ffdst
+        self.dong = dong
 
 
 class WeatherData:

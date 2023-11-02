@@ -3,6 +3,7 @@ import os
 import uvicorn
 from dotenv import load_dotenv
 from fastapi import FastAPI
+from starlette.middleware.cors import CORSMiddleware
 
 from core.sql_util import check_and_create_table
 from routers import deepl, location, subway, weather, auth
@@ -10,6 +11,20 @@ from routers import deepl, location, subway, weather, auth
 # from service.summary.nlp_util import update_nlp_client
 
 app = FastAPI()
+
+origins = [
+    "http://localhost",
+    "http://localhost:1777",
+    "https://port-0-server-jvpb2mlo5d0nyx.sel5.cloudtype.app/"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
 
 app.include_router(auth.router, prefix="/auth", tags=["auth"])
 app.include_router(weather.router, prefix="/service/weather", tags=["weather"])
@@ -38,4 +53,4 @@ if __name__ == "__main__":
         load_dotenv()
         # update_nlp_client()
 
-    uvicorn.run("main:app", port=1777, reload=True)
+    uvicorn.run("main:app", port=1777, reload=True, host="0.0.0.0")

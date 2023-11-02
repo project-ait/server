@@ -8,3 +8,5 @@ beautifulsoup4
 # openai-whisper
 nlpcloud
 ipinfo
+starlette
+deepl

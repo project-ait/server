@@ -9,9 +9,6 @@
 
 ### Prerequisites
 
-- We developed in Python 3.11 ~ 3.12
-- PostgreSQL
-
 ```bash
 pip install -r requirements.txt
 ```
@@ -30,15 +27,6 @@ python main.py  # start the server
 
 #### Build API Image
 
-Execute this script:
-
 ```bash
-python. ./docker/build.py
-```
-
-#### Run Compose
-
-```bash
-docker-compose up
-# or 'docker-compose up -d' for background running
+docker build tag ait-server .
 ```
